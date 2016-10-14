@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*- 
 import csv
 import json
 import re
 import requests
+import codecs
 
 response = requests.get("https://foia.state.gov/searchapp/Search/SubmitSimpleQuery",    
     params = {"searchText": "*",
@@ -28,6 +30,13 @@ writer = csv.writer(f)
 writer.writerow(header)
 
 for row in data["Results"]:
-    writer.writerow([row[col] for col in header])
+    temp_list = []
+    for col in header:
+        if isinstance(row[col], basestring):
+            temp_list.append(row[col].encode('utf-8'))
+        else:
+            temp_list.append(row[col])
+        
+    writer.writerow(temp_list)
 
 f.close()
